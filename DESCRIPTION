@@ -4,14 +4,15 @@ Description: This package contains a methodology that makes use of the factor
     structure of large dimensional panels to understand the nature of
     nonstationarity inherent in data. This is referred to as PANIC - Panel
     Analysis of Nonstationarity in Idiosyncratic and Common Components. PANIC
-    (2004) includes valid pooling methods that allow panel tests to be
-    constructed. PANIC (2004) can detect whether the nonstationarity in a
-    series is pervasive, or variable specific, or both. PANIC (2010) includes
-    two new tests on the idiosyncratic component that estimates the pooled
-    autoregressive coefficient and sample moment, respectively. The PANIC model
-    approximates the number of factors based on Bai and Ng (2002)
+    (2004) includes valid pooling methods that allow panel unit root tests
+    tests to be constructed. PANIC (2004) can detect whether the
+    nonstationarity in a series is pervasive, or variable specific, or both.
+    PANIC (2010) includes the Panel Modified Sargan-Bhargava test, three models
+    for a Moon and Perron style test, and a bias correction for the
+    idiosyncratic unit root test of PANIC (2004). The PANIC model approximates
+    the number of factors based on Bai and Ng (2002).
 Depends: R(>= 2.10.0)
-Version: 0.0.0.2
+Version: 0.0.0.5
 License: GPL-3
 LazyData: no
 Author: Steve Bronder <sbronder@stevebronder.com>
@@ -20,7 +21,7 @@ URL: stevebronder.com
 Suggests: knitr
 VignetteBuilder: knitr
 Imports: MCMCpack
-Packaged: 2014-10-24 06:46:57 UTC; brond_000
+Packaged: 2015-02-05 20:10:42 UTC; steve
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2014-10-24 10:55:46
+Date/Publication: 2015-02-06 00:26:23

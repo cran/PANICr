@@ -11,7 +11,8 @@ panic04(x, nfac, k1, jj)
 \item{nfac}{An integer specifying the maximum number of factors allowed
 while estimating the factor model.}
 
-\item{k1}{The maximum lag allowed in the ADF test.}
+\item{k1}{The maximum lag allowed in the ADF test. The suggested setting for the maximum number of lags is
+4*(T/100)^(1/4) where T is the number of observations.}
 
 \item{jj}{an Integer 1 through 8. Choices 1 through 7 are respectively, IC(1),
 IC(2), IC(3), AIC(1), BIC(1), AIC(3), and BIC(3), respectively. Choosing 8
@@ -21,7 +22,7 @@ eigenvalues is less than  or equal to .5.}
 \value{
 adff A data frame containing pooled demeaned critical values, demeaned error term critical values ,demeaned
  and detrended critical values ,R squared for principle component
- , And the significance of the error components.
+ , and the significance of the error components.
 
 adf.ind A matrix containing the critical values for the pooled Demeaned ADF test on the data, the
 pooled ADF test on the common components, the pooled demeaned ADF test on the
@@ -36,7 +37,7 @@ moment, and Model C performs the MP test while projecting on intercept and trend
 }
 \references{
 Bai, Jushan, and Serena Ng.
-"A PANIC Attack on Unit Roots and Cointegration."
+'A PANIC Attack on Unit Roots and Cointegration.'
 Econometrica 72.4 (2004): 1127-1177. Print.
 }
 
