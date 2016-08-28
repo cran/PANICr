@@ -1,29 +1,31 @@
-#'@title PANIC (2004) Power Test
+#'@title PANIC (2004) MCMC Non-Stationarity Tests on Common and Idiosyncratic Components
 #'
-#'@description This function performs an MCMC over PANIC (2010) 
+#'@description This function performs an MCMC over the 
+#' tests on the idiosyncratic and common component from PANIC (2004).
 #'
-#'@usage MCMCpanic04(x, nfac, k1, jj,burn = 1000, mcmc = 10000, thin = 10, verbose = 0,
-#'seed = NA, lambda.start = NA, psi.start = NA, l0 = 0, L0 = 0, 
-#'a0 = 0.001, b0 = 0.001, std.var = TRUE)
+#'@usage MCMCpanic04(x, nfac, k1, criteria = NULL,burn = 1000,
+#' mcmc = 10000, thin = 10, verbose = 0, seed = NA,
+#' lambda.start = NA, psi.start = NA, l0 = 0, L0 = 0, 
+#' a0 = 0.001, b0 = 0.001, std.var = TRUE,...)
 #'
 #'
-#'@param x A NxT matrix containing the data
+#'@param x An object of class xts with each column being a time series
 #'
 #'@param nfac An integer specifying the maximum number of factors allowed
 #' while estimating the factor model.
 #'
-#'@param k1 The maximum lag allowed in the ADF test.
+#'@param k1 an integer that is the maximum lag allowed in the ADF test.
 #'
-#'@param jj an Integer 1 through 8. Choices 1 through 7 are respectively, IC(1),
-#' IC(2), IC(3), AIC(1), BIC(1), AIC(3), and BIC(3), respectively. Choosing 8
-#' makes the number of factors equal to the number of columns whose sum of
+#'@param criteria a character vector of length one with a value of either
+#' IC1, IC2, IC3, AIC1, BIC1, AIC3, BIC3, or eigen. Choosing eigen makes
+#' the number of factors equal to the number of columns whose sum of
 #' eigenvalues is less than  or equal to .5.
 #'
-#'@param burn The number of burn in iterators for the sampler
+#'@param burn Integer of the number of burn in iterators for the sampler
 #'
-#'@param mcmc The number of iterations in the sampler
+#'@param mcmc Integer of the number of iterations in the sampler
 #'
-#'@param thin The thinning interval used in the simulation. mcmc must be divisible by this value.
+#'@param thin Integer of the thinning interval used in the simulation. mcmc must be divisible by this value.
 #'
 #'@param verbose A positive integer which determines whether or not the progress of the
 #' sampler is printed to the screen. If verbose is greater than 0 the iteration 
@@ -48,151 +50,165 @@
 #'@param std.var if TRUE the variables are rescaled to have zero mean and unit variance.
 #' Otherwise, the variables are rescaled to have zero mean, but retain their observed variances
 #' 
-#'@return adf.mcmc A list of the MCMC samples of the test statistics. Returns the test statistics
-#'  Pooled Cointegration a,  Pooled Cointegration b, Pooled Idiosyncratic a, 
-#'  Pooled Idiosyncratic b, Pooled Demeaned test, and tests on Common components. The critical values for the Pooled Cointegration test
-#'  can be found in Bai and Ng (2004). The pooled idiosyncratic test has a critical
-#'  value of 1.64. The Pooled Demeaned test has a critical value of 2.86. The common components have a critical
-#'  value of -2.86. All critical values are at a 5% significance level
-#'
-#'@return factor_mcmc The MCMC object from MCMCfactanal()
+#'@param ... extra parameters to pass to MCMCfactanal
+#' 
+#'@return mcmc_tests An mcmc object containing the resampled tests on the common components as well as
+#' the test on the idiosyncratic component.
+#' 
+#'@return factor_mcmc The results from MCMCfactanal()
 #' 
 #'@references Bai, Jushan, and Serena Ng. 
 #''A PANIC Attack on Unit Roots and Cointegration.'
 #' Econometrica 72.4 (2004): 1127-1177. Print.
 #' 
-#' @references ndrew D. Martin, Kevin M. Quinn, Jong Hee Park (2011). MCMCpack: Markov Chain Monte Carlo
+#' @references Andrew D. Martin, Kevin M. Quinn, Jong Hee Park (2011). MCMCpack: Markov Chain Monte Carlo
 #' in R. Journal of Statistical Software. 42(9): 1-21. URL http://www.jstatsoft.org/v42/i09/.
 #'
-MCMCpanic04 <- function(x, nfac, k1, jj, burn = 1000, mcmc = 10000, thin = 10, verbose = 0, seed = NA, lambda.start = NA, psi.start = NA, l0 = 0, L0 = 0, a0 = 0.001, 
-    b0 = 0.001, std.var = TRUE) {
-   
-  x <- as.matrix(x)
-    
-    Tn <- dim(x)[1]
-    
-    N <- dim(x)[2]
-    
-    intx <- as.matrix(t(apply(x, 2, mean)))
-    
-    repmat <- intx[rep(seq_len(nrow(intx)), each = I(nrow(x))), ]
-    
-    x1 <- x - repmat
-    
-    x2 <- x1[2:Tn, ]
-    
-    dx <- trimr(mydiff(x, 1), 1, 0)
-    
-    scale <- sqrt(N) * Tn
-    
-    factors <- getnfac(dx, nfac, jj)
-
-    ic <- factors$ic
-    
-    if (ic == 0) {
-        ic <- 1
-    }
-    
-    PC <- pc(dx, ic)
-    
-    if (ic == 1) {
-      p = 0
-    }
-    if (ic == 0) {
-      p = -1
-    }
-    if (ic > 1) {
-      p = 1
-    }
-    
-    lamhat <- PC$lambda
-    
-    dfhat <- PC$fhat
-    
-    fac.test <- MCMCfactanal(~., factors = ic, data = as.data.frame(dx), burnin = burn, mcmc = mcmc, thin = thin, verbose = verbose, seed = seed, lambda.start = lambda.start, 
-        psi.start = psi.start, l0 = l0, L0 = L0, a0 = a0, b0 = b0, store.scores = TRUE, std.var = std.var)
-    
-    
-
-    lamhat <- NULL
-    dfhat  <- NULL
-    ehat0  <- NULL
-    fhat0  <- NULL
-    reg    <- NULL
-    ehat1  <- NULL
-    beta1  <- NULL
-    adf20  <- NULL
-    adf30  <- NULL
-    adf50  <- NULL
-    padf30 <- NULL
-    adf30a <- NULL
-    adf30b <- NULL
-    padf50 <- NULL
-    adf50a <- NULL
-    adf50b <- NULL
-    adf20ab <- NULL
+#'@export
+#'
+#'@import coda
+#'@import MCMCpack
+#'@import xts
+MCMCpanic04 <- function(x, nfac, k1, criteria = NULL, burn = 1000, mcmc = 10000, thin = 10, verbose = 0, seed = NA, lambda.start = NA, psi.start = NA, l0 = 0, L0 = 0, a0 = 0.001, 
+                        b0 = 0.001, std.var = TRUE,...) {
   
-    for (j in 1:I(mcmc/thin)) {
-        lamhat[[j]] <- matrix(fac.test[j, 1:I(N * ic)], N, ic)
-     
-        dfhat[[j]] <- matrix(fac.test[j, I(N * ic + N + 1):I((Tn - 1) * ic + N * ic + N)], I(Tn - 1), ic, byrow = TRUE)
+  ###  
+  # Begin TESTS
+  ###
+  is.xts(x) || stop("x must be an xts object so lags and differences are taken properly")
+  
+  
+  Tn <- dim(x)[1]
+  N <- dim(x)[2]
+  
+  nfac < N || stop(" nfac must be less than the number of series.")
+  if (is.null(nfac)){
+    warning("nfac is NULL, setting the maximum number of factors equal to the number of columns")
+    nfac <- dim(x)[2]
+  }
+  
+  if (is.null(k1)){
+    warning("k1 is NULL, setting k1 equal to  k1 4 * ceiling((T/100)^(1/4))")
+    k1 <- 4 * ceiling((dim(x)[1]/100)^(1/4))
+  }
+  if (!(k1 %% 1 == 0)){
+    stop(" k1 must be an integer.")
+  }
+  if (is.null(criteria)){
+    warning("criteria is NULL, setting criteria to BIC3")
+    criteria <- "BIC3"
+  }
+  ####
+  ## End Tests
+  ####
+  
+  # center, trim, and difference x
+  x_dm <- scale(x,center = TRUE,scale = FALSE)
+  x_trim <- x_dm[2:Tn, ]
+  x_diff <- diff(x, 1)[2:Tn,]
+  
+  # Value for scaling?
+  scaler <- sqrt(N) * Tn
+  
+  # approximate factor model
+  factors <- getnfac(x_diff, nfac, criteria)
+  
+  
+  ic <- factors$ic
+  
+  if (is.null(ic)) {
+    ic <- 1
+  }
+  
+  PC <- pc(x_diff, ic)
+  
+  if (ic == 1) {
+    p = 0
+  } else if (ic == 0) {
+    p = -1
+  } else if (ic > 1) {
+    p = 1
+  }
+  
+  lamhat <- PC$lambda
+  
+  dfhat <- PC$fhat
+  
+  fac.test <- MCMCfactanal(~.,
+                           factors = ic,
+                           data = as.data.frame(x_diff),
+                           burnin = burn,
+                           mcmc = mcmc,
+                           thin = thin,
+                           verbose = verbose,
+                           seed = seed,
+                           lambda.start = lambda.start, 
+                           psi.start = psi.start,
+                           l0 = l0,
+                           L0 = L0,
+                           a0 = a0,
+                           b0 = b0,
+                           store.scores = TRUE,
+                           std.var = std.var)
+  
+  
+  
+  mcmc_stuff <- lapply(1:I(mcmc/thin), function(j){
+    
+    lamhat <- matrix(fac.test[j, 1:I(N * ic)], N, ic)
+    
+    dfhat <- matrix(fac.test[j, I(N * ic + N + 1):I((Tn - 1) * ic + N * ic + N)], I(Tn - 1), ic, byrow = TRUE)
+    fhat0 <- xts::reclass(dfhat, match.to = x_diff)
+    fhat0 <- cumsum(fhat0)
+    
+    dehat <- x_diff - tcrossprod(dfhat, lamhat)
+    ehat0 <- cumsum(dehat)
+    
+    # Set up matrices for 
+    # 1. Idiosyncratic components
+    # 2. Regression of PC on x
+    # 3. coefficients of regression
+    reg <- cbind(matrix(1, I(Tn - 1), 1), fhat0)
 
-        ehat0[[j]] <- apply(dx - tcrossprod(dfhat[[j]], lamhat[[j]]), 2, cumsum)
-        
-        fhat0[[j]] <- apply(dfhat[[j]], 2, cumsum)
-        
-        reg[[j]] <- cbind(matrix(1, I(Tn - 1), 1), fhat0[[j]])
-        
-        ehat1[[j]] <- matrix(0, I(Tn - 1), N)
-        
-        beta1[[j]] <- matrix(0, I(ic + 1), N)
-        
-        for (i in 1:N) {
-            
-            beta1[[j]][, i] <- qr.solve(reg[[j]], x2[, i])
-            
-            ehat1[[j]][, i] <- x2[, i] - reg[[j]] %*% beta1[[j]][, i]
-        }
-        
+    # Do regressions for each idiosync component
+    
+    beta1 <- qr.solve(reg,x_trim)
+    ehat1 <- x_trim - reg %*% beta1
+    
+    adf_fhat0 <- matrix(0, factors$ic, 1)
+    adf_ehat0 <- matrix(0, N, 1)
+    adf40 <- matrix(0, N, 1)
+    adf_ehat1 <- matrix(0, N, 1)
+
+    # test fhat0 for a unit root
+    for (i in 1:factors$ic) {
+      
+      adf_fhat0[i, ] <- adf04(fhat0[, i], k1, p)  
+    }
+    
+    # test ehat0 and ehat1 for a unit root
+    adf_ehat0 <- adf04(ehat0, k1, -1)  
+    adf_ehat1 <- adf04(ehat1, k1, -1)  
+    
+    padf_ehat0 <- pool(adfnc, adf_ehat0)
+    adf_ehat0a <- padf_ehat0$adf31a
+    adf_ehat0b <- padf_ehat0$adf31b
+    
+    # MQ test
+    # coint0 is the Phillips-Ouliaris Zt test with a constant.
+    padf_ehat1 <- poolcoint(coint0, adf_ehat1, factors$ic)
+    adf_ehat1a <- padf_ehat1$pvala
+    adf_ehat1b <- padf_ehat1$pvalb
+    
+    output <- as.data.frame(matrix(c(adf_fhat0,adf_ehat0b),1,(length(adf_fhat0) + 1)))
+    colnames(output) <- c(paste0("Common",1:I(length(adf_fhat0))),"idiosyncratic")
+    return(output)
+  })
+  
+  mcmc_stuff <- do.call(rbind,mcmc_stuff)
+  
+  mcmc_stuff <- coda::as.mcmc(mcmc_stuff)
+  attributes(mcmc_stuff)$mcpar[3] <- thin
  
-        adf20[[j]] <- matrix(0, 1, ic)
-        
-        for (i in 1:ic) {
-            
-            adf20[[j]][i] <- adf04(fhat0[[j]][, i], k1, p)
-        }
-        
-        
-        adf30[[j]] <- adf04(ehat0[[j]], k1, -1)  # test ehat0
-        
-        adf50[[j]] <- adf04(ehat1[[j]], k1, -1)  # test ehat1
-        
-        # now do the pooled test
-        
-        
-        padf30[[j]] <- pool(adfnc, adf30[[j]])
-        
-        adf30a[[j]] <- padf30[[j]]$adf31a
-        
-        adf30b[[j]] <- padf30[[j]]$adf31b
-        
-        padf50[[j]] <- poolcoint(coint0, adf50[[j]], ic)
-        
-        adf50a[[j]] <- padf50[[j]]$pvala
-        
-        adf50b[[j]] <- padf50[[j]]$pvalb
-        
-    }
-    
-    adf20ab <- as.data.frame(matrix(unlist(adf20), mcmc, ic, byrow = TRUE))
-    
-    for (i in 1:ic) {
-        colnames(adf20ab)[i] <- paste0("Common", i)
-    }
-    
-    adf.tests <- cbind(adf50a, adf50b, adf30a, adf30b, adf20ab)
-    
-    
-    colnames(c("Pooled Cointegration a", "Pooled Cointegration b", "Pooled Idiosyncratic a", "Pooled Idiosyncratic b", "Pooled Demeaned"))
-    results <- list(adf.mcmc = adf.tests, factor_MCMC = fac.test)
+  results <- list(mcmc_tests = mcmc_stuff, factor_MCMC = fac.test)
 } 

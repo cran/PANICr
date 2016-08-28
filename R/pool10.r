@@ -2,37 +2,38 @@
 #'
 #'@description This function find the P values for the pooled test in PANIC (2010)
 #'
-#'@usage pool(a,x)
+#'@usage pool(p_values,test_values)
 #'
 #'
-#'@param a A supplied matrix containing p values
+#'@param p_values a data frame containing the p values
 #'
-#'@param x The adf test to be pooled
+#'@param test_values a matrix of adf test values to be pooled
 #'
-#'@return adf31a a P-value for the pooled test
+#'@return adf31a a numeric vector of the fisher sum of the p-values
 #'
-#'@return adf31b a P-value for the pooled test
+#'@return adf31b a numeric vector containing the critical value of the pooling test
 #'
+#'@export
 
-pool <- function(a, x) {
+pool <- function(p_values, test_values) {
     
-    a <- as.matrix(a)
+    p_values <- as.matrix(p_values)
     
-    x <- as.matrix(x)
+    test_values <- as.matrix(test_values)
     
-    N <- ncol(x)
+    N <- ncol(test_values)
     
     pval <- matrix(0, N, 1)
     
     for (i in 1:N) {
         
-        aa <- abs(a[, 1] - x[, i])
+        aa <- abs(p_values[, 1] - test_values[, i])
         
         j1 <- min(aa)
         
         j2 <- which.min(aa)
         
-        pval[i, ] <- a[j2, 2]
+        pval[i, ] <- p_values[j2, 2]
         
     }
     

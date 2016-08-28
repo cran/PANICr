@@ -1,46 +1,55 @@
 #'@title Determining The Number of Factors In Approximate Factor Model
 #'
 #'@description This function approximates the number of factors in an approximate factor model
-#'  for large N by T matrices using the methods found in Bai and Ng (2002)
+#'  for large N by T matrices using the methods and criteria found in Bai and Ng (2002)
 #'
-#'@usage getnfac(x,kmax,jj)
+#'@usage getnfac(x,kmax,criteria)
 #'
-#'@param x A NxT matrix containing the data.
+#'@param x A matrix containing the data.
 #'
-#'@param kmax The maximum number of common factors used to compute the criterion
-#' function for the estimate of ic, the number of common factors. This methedology
-#' is weak to underestimation of the number of common factors. It is suggested
-#' that overestimation is preferred.
+#'@param kmax An integer with the maximum number of common factors to search over. This methodology
+#' is weak to underestimation of the number of common factors so setting this value higher is preferred.
 #'
-#' @param jj an Integer 1 through 8. Choices 1 through 7 are respectively, IC(1),
-#' IC(2), IC(3), AIC(1), BIC(1), AIC(3), and BIC(3), respectively. Choosing 8
-#' makes the number of factors equal to the number of columns whose sum of
-#' eigenvalues is less than  or equal to .5.
+#' @param criteria a character vector of length one with values of either IC1, IC2, IC3, AIC1, BIC1, AIC3, BIC3, or eigen.
+#'  Choosing eigen makes the number of factors equal to the number of columns whose sum of eigenvalues is less than  or equal to .5.
 #'
 #' @details This function approximates the number of factors in an approximate
 #' factor model. Amongst the penalty functions BIC(3) has been found to be
-#' strict against cross-sectional dependence and is recommended for large
-#' matrices. IC(1), IC(2), and IC(3) . AIC(1) will not work for all N and T.
-#' BIC(1) will not work for small N relative to T. AIC(3) and BIC(3) take into
-#' account the panel structure of the data. AIC(3) performs in consistently
-#' across configurations of the data while BIC(3) may not perform well for some
-#' configurations.
+#' strict against cross-sectional dependence and is recommended for panels with greater than 18 series.
+#'  IC(1) is most commonly used. BIC(1) is not recommended for small N relative to T. AIC(3) and BIC(3) take into
+#' account the panel structure of the data. AIC(3) performs consistently
+#' across configurations of the data while BIC(3) performs better on
+#' large N data sets.
 #'
-#' @return ic The approximate number of factors based off of the chosen.
+#' @return ic Integer of the approximate number of factors based off of the chosen
 #' penalty function
 #'
-#' @return lambda Estimated factor loadings associated with common factors.
+#' @return lambda A matrix of the estimated factor loadings associated with common factors.
 #'
-#' @return Fhat Estimated common component
+#' @return Fhat A matrix of the estimated common components
 #'
 #'
-#' @references Jushan, and Serena Ng. 'Determining the Number of Factors in
+#' @references Jushan Bai and Serena Ng. 'Determining the Number of Factors in
 #' Approximate Factor Models.' Econometrica 70.1 (2002): 191-221. Print.
 #'
-#'
-getnfac <- function(x, kmax, jj) {
-    
-    x <- as.matrix(x)
+#'@export
+getnfac <- function(x, kmax = NULL, criteria = NULL) {
+  
+  
+  #######
+  ## Begin: Tests
+  #######
+  all(sapply(x, is.numeric) == TRUE)  || stop("All columns must be numeric")
+  is.xts(x) || stop("x must be an xts object so lags and differences are taken properly")
+  if (!(kmax %% 1 == 0)){
+    stop(" k1 must be an integer.")
+  }
+  if (is.null(criteria)){
+    warning("criteria is NULL, setting criteria to BIC3")
+    criteria <- "BIC3"
+  }
+  ########
+  
     Tn <- dim(x)[1]
     
     N <- dim(x)[2]
@@ -55,39 +64,46 @@ getnfac <- function(x, kmax, jj) {
     
     GCT <- min(N, Tn)
     
-    if (jj == 1) {
+    
+    if(is.null(criteria)){
+      warning("Criteria is NULL, setting to BIC3")
+      criteria <- "BIC3"
+    }
+    if (criteria == "IC1") {
         CT[1, ] <- log(NT/NT1) * ii * NT1/NT
     }
     
-    if (jj == 2) {
+    if (criteria == "IC2") {
         CT[1, ] <- (NT1/NT) * log(GCT) * ii
     }
     
-    if (jj == 3) {
+    if (criteria == "IC3") {
         CT[1, ] <- ii * log(GCT)/GCT
     }
     
-    if (jj == 4) {
+    if (criteria == "AIC1") {
         CT[1, ] <- 2 * ii/Tn
     }
     
-    if (jj == 5) {
+    if (criteria == "BIC1") {
         CT[1, ] <- log(T) * ii/Tn
     }
     
-    if (jj == 6) {
+    if (criteria == "AIC3") {
         CT[1, ] <- 2 * ii * NT1/NT
     }
     
-    if (jj == 7) {
+    if (criteria == "BIC3") {
         CT[1, ] <- log(NT) * ii * NT1/NT
     }
+    
+      
     
     IC1 <- matrix(0, dim(CT)[1], I(kmax + 1))
     
     Sigma <- matrix(0, 1, I(kmax + 1))
     
-    XX <- x %*% t(x)
+    XX <- tcrossprod(x)
     
     eig <- svd(t(XX))
     
@@ -99,7 +115,7 @@ getnfac <- function(x, kmax, jj) {
     
     sumeigval <- apply(eigval, 2, cumsum)/sum(eigval)
     
-    if (jj < 8) {
+    if (criteria != "eigen") {
         for (i in kmax:1) {
             
             Fhat <- Fhat0[, 1:i]
@@ -125,12 +141,12 @@ getnfac <- function(x, kmax, jj) {
         
     }
     
-    if (jj == 8) {
+    if (criteria == "eigen") {
         
         for (j in 1:I(nrow(sumeigval))) {
             
             if (sumeigval[j] >= 0.5) {
-                ic1 = j
+                ic1 <- j
                 break
             }
         }
@@ -155,5 +171,6 @@ getnfac <- function(x, kmax, jj) {
     
     
     output <- list(ic = ic1, lambda = lambda, Fhat = Fhat)
+    
     return(output)
 } 
