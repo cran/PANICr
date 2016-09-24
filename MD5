@@ -1,7 +1,7 @@
-e29331efc15219b705727700e1eb21fd *DESCRIPTION
+8a05591e8c972b23b4759db5ff397f07 *DESCRIPTION
 b14154ef844a7cd8f25df8a0b10fd5b9 *NAMESPACE
-10f2afe5c13ed4df5d0b083b27c78383 *R/MCMCfacstuffzzz.R
-f12a24d5e413e6589a7e2393f8637f3b *R/MCMCpanic10.R
+0ca4a836587252da4e535b4cf8ec74d8 *R/MCMCfacstuffzzz.R
+4ce065fa23b707092ca5da5180a3dda4 *R/MCMCpanic10.R
 0eb18eeaf5a9635538923b0638d04693 *R/NIPA_agg_9.R
 8ba5b1b6adbb8ef2a6ab2f001b198a47 *R/NIPAagg5.R
 55e549ca224a2f3849d6c30d20eaf046 *R/adf04.r
@@ -9,7 +9,7 @@ fdcd9c9a74fd21882a6b27cbbd27bd2f *R/adf10.r
 672ec15bf3747614371c5cc673d70532 *R/adfc2.R
 046951984e36df8524d2960ef9c9bb5f *R/adfnc.R
 b0a316a1c4826381b737a57a3ec18aa3 *R/adfp.r
-436f12b353185bdfeda3b9e2b9530608 *R/cPANIC.r
+ef0ae8ab87a45c25edbb3c0dc493a44e *R/cPANIC.r
 41ebb60aa68c7a32a2477e165560f3e0 *R/coint0.R
 13c093ba12d156875e0bde116135831f *R/getnfac.r
 55ce6d5e5f67d8f162116ff853dc56c8 *R/glsd.r
@@ -20,7 +20,7 @@ d043fa5723e93695f937e1ef6acd9aa6 *R/mydiff.r
 4e40bfee8a164952e8eb2095e713fa1f *R/myols.r
 373eaff4f8097f32d616dd5f23e048f4 *R/nuisance.r
 e261b23957823b475ca29f2bdd4f8f31 *R/nw.r
-6c80970a268338d6f94bce51094e5c33 *R/panic10b.r
+ba53043189752bb3adedb4a6b613d0cc *R/panic10b.r
 dc94aacf359e9dfd08efaafa689dccd4 *R/panic_generics.R
 9ca3ffe6b1111207551450c7fdabddc6 *R/pc.R
 ed33424033db67c60a38f5ff2b8f6525 *R/pool10.r
@@ -29,7 +29,7 @@ da5464fe1b5f65b87e334d0ddf643438 *R/poolcoint.R
 1bd4065fe4d5ae736b6371840eadd8b4 *R/sysdata.rda
 b24088ec2bb260c03ac03dadd6974488 *R/trimr.r
 446699eb2e230bc5ead589548ba6c4d0 *README.md
-457d0db0c01850c51cac3edff4929a6d *build/vignette.rds
+60f34f5faa8c91ef73042ef0ac9a9875 *build/vignette.rds
 37ef053b388312df4dc86ec31141a61f *data/NIPA_agg_5.rda
 dfe79993575b5203546cdb51f9d00056 *data/NIPA_agg_9.rda
 9cae8e8f01781c7694f402a2f3955a4a *data/adfc2.rda
@@ -39,7 +39,7 @@ e51c5fc169fd94620614e835afd4f9cc *data/datalist
 30f3870f3172fd45eb60214e97bf2ea8 *data/lm1.rda
 8949b1f36865c5b213b21ccc8aa08d75 *inst/doc/PANICr.R
 d621d4f92aa742a642d7f0f586bda11e *inst/doc/PANICr.Rmd
-7af713e632db7a720d720e02d8fbfd80 *inst/doc/PANICr.html
+89b8632d75e660cd1ce7645622bfa68d *inst/doc/PANICr.html
 261c954ae7c75d9a09ff1a9ad3cc409f *inst/test_data/test_04.RData
 b33c61ee7d03fbc37d055507de863eec *inst/test_data/test_10_dm.RData
 b4b97389fbaae0c1a11261cbf69445f9 *inst/test_data/test_10_ndm.RData
@@ -71,7 +71,7 @@ f7538ec9aa5cb0a435bd8b2946179f4f *man/pool.Rd
 ad60e260f3c09cf762951b351641fe7b *man/s2ar.Rd
 84368733fdcd2f4d71ecb5cbfe3e844c *man/trimr.Rd
 3a08161532c77616c801fc27aaae07ac *tests/testthat.R
-5426b9a1b9d3ba618d1ece6ae0ac1336 *tests/testthat/test_panic_io.R
+2182c786ad24cc025083ac2e0d1dd06d *tests/testthat/test_panic_io.R
 2b3b8ea1052ca87c7ecf2aeb476afd5f *vignettes/NIPAagg1.rda
 1e03c577db959414e9db42b5af99c2af *vignettes/NIPAagg2.rda
 78e7ed5c121113db5d7cabcfcb182955 *vignettes/NIPAagg3.rda

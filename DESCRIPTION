@@ -14,7 +14,7 @@ Description: A methodology that makes use of the factor structure of large
     model approximates the number of factors based on
     Bai and Ng (2002) <doi:10.1111/1468-0262.00273>.
 Depends: R(>= 2.10.0)
-Version: 0.1.3
+Version: 1.0.0
 License: GPL-3
 LazyData: no
 Author: Steve Bronder <sbronder@stevebronder.com>
@@ -25,6 +25,6 @@ VignetteBuilder: knitr
 Imports: MCMCpack, xts, coda
 RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2016-08-27 21:25:27 UTC; steve
+Packaged: 2016-09-23 21:32:38 UTC; steve
 Repository: CRAN
-Date/Publication: 2016-08-28 07:35:23
+Date/Publication: 2016-09-24 13:01:08
